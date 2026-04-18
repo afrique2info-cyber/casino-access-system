@@ -8,9 +8,17 @@ if (!isAdminLoggedIn()) {
 
 $db = getDB();
 
-// Statistiques
-$statsStmt = $db->query("SELECT * FROM code_statistics");
-$stats = $statsStmt->fetch();
+// Statistiques (calcul direct sans vue)
+$statsQuery = $db->query("
+    SELECT 
+        COUNT(*) as total_codes,
+        SUM(CASE WHEN is_used = FALSE THEN 1 ELSE 0 END) as available_codes,
+        SUM(CASE WHEN is_used = TRUE THEN 1 ELSE 0 END) as used_codes,
+        SUM(amount) as total_amount,
+        SUM(CASE WHEN is_used = FALSE THEN amount ELSE 0 END) as available_amount
+    FROM access_codes
+");
+$stats = $statsQuery->fetch();
 
 // Codes récents
 $recentCodesStmt = $db->query("

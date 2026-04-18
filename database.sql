@@ -45,12 +45,12 @@ CREATE INDEX idx_code ON access_codes(code);
 CREATE INDEX idx_expires ON access_codes(expires_at);
 CREATE INDEX idx_used ON access_codes(is_used);
 
--- Vue pour statistiques
-CREATE VIEW code_statistics AS
-SELECT 
-    COUNT(*) as total_codes,
-    SUM(CASE WHEN is_used = FALSE THEN 1 ELSE 0 END) as available_codes,
-    SUM(CASE WHEN is_used = TRUE THEN 1 ELSE 0 END) as used_codes,
-    SUM(amount) as total_amount,
-    SUM(CASE WHEN is_used = FALSE THEN amount ELSE 0 END) as available_amount
-FROM access_codes;
+-- Vue pour statistiques (optionnelle)
+-- CREATE VIEW code_statistics AS
+-- SELECT 
+--     COUNT(*) as total_codes,
+--     SUM(CASE WHEN is_used = FALSE THEN 1 ELSE 0 END) as available_codes,
+--     SUM(CASE WHEN is_used = TRUE THEN 1 ELSE 0 END) as used_codes,
+--     SUM(amount) as total_amount,
+--     SUM(CASE WHEN is_used = FALSE THEN amount ELSE 0 END) as available_amount
+-- FROM access_codes;

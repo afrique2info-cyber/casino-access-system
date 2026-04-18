@@ -19,8 +19,27 @@ define('CODE_LENGTH', 12);
 define('CODE_PREFIX', 'CAS');
 define('SESSION_TIMEOUT', 3600); // 1 heure
 
-// Démarrer la session
-session_start();
+// Démarrer la session avec configuration sécurisée
+if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'lifetime' => SESSION_TIMEOUT,
+        'path' => '/',
+        'domain' => $_SERVER['HTTP_HOST'] ?? 'localhost',
+        'secure' => isset($_SERVER['HTTPS']),
+        'httponly' => true,
+        'samesite' => 'Strict'
+    ]);
+    session_start();
+    
+    // Régénérer l'ID de session périodiquement pour la sécurité
+    if (!isset($_SESSION['created'])) {
+        $_SESSION['created'] = time();
+    } else if (time() - $_SESSION['created'] > 1800) {
+        // Régénérer toutes les 30 minutes
+        session_regenerate_id(true);
+        $_SESSION['created'] = time();
+    }
+}
 
 // Connexion à la base de données
 function getDB() {
@@ -59,7 +78,17 @@ function isAdminLoggedIn() {
 
 // Vérifier si joueur est connecté
 function isPlayerLoggedIn() {
-    return isset($_SESSION['player_code']) && !empty($_SESSION['player_code']);
+    if (!isset($_SESSION['player_code']) || empty($_SESSION['player_code'])) {
+        return false;
+    }
+    
+    // Vérifier aussi que le code existe toujours et n'est pas expiré
+    $db = getDB();
+    $stmt = $db->prepare("SELECT COUNT(*) as count FROM access_codes WHERE code = ? AND is_used = TRUE");
+    $stmt->execute([$_SESSION['player_code']]);
+    $result = $stmt->fetch();
+    
+    return $result && $result['count'] > 0;
 }
 
 // Générer un code aléatoire

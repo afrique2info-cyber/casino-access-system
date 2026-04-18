@@ -3,7 +3,31 @@ require_once 'config.php';
 
 // Vérifier si le joueur est connecté
 if (!isPlayerLoggedIn()) {
-    redirect('index.php');
+    // Vérifier si un code est passé dans l'URL
+    if (isset($_GET['code'])) {
+        $accessCode = $_GET['code'];
+        $db = getDB();
+        
+        // Vérifier le code
+        $stmt = $db->prepare("SELECT * FROM access_codes WHERE code = ? AND is_used = FALSE AND (expires_at IS NULL OR expires_at > NOW())");
+        $stmt->execute([$accessCode]);
+        $codeData = $stmt->fetch();
+        
+        if ($codeData) {
+            // Connecter le joueur avec ce code
+            $_SESSION['player_code'] = $codeData['code'];
+            $_SESSION['player_amount'] = $codeData['amount'];
+            $_SESSION['code_id'] = $codeData['id'];
+            
+            // Marquer comme utilisé
+            $updateStmt = $db->prepare("UPDATE access_codes SET is_used = TRUE, used_at = NOW(), player_ip = ? WHERE id = ?");
+            $updateStmt->execute([$_SERVER['REMOTE_ADDR'], $codeData['id']]);
+        } else {
+            redirect('index.php');
+        }
+    } else {
+        redirect('index.php');
+    }
 }
 
 $game = $_GET['game'] ?? '';

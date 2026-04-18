@@ -277,24 +277,24 @@ $transactions = $transactionsStmt->fetchAll();
         </div>
         
         <div class="games-grid">
-            <div class="game-card" onclick="window.location.href='play.php?game=keno'">
+            <div class="game-card" onclick="window.location.href='play.php?game=keno&code=<?php echo urlencode($playerCode); ?>'">
                 <div class="game-icon keno-icon">
                     <i class="fas fa-dice-d20"></i>
                 </div>
                 <h3>KENO</h3>
                 <p>Jeu de loterie excitant. Choisissez vos nombres et gagnez gros avec des multiplicateurs impressionnants.</p>
-                <a href="play.php?game=keno" class="play-btn">
+                <a href="play.php?game=keno&code=<?php echo urlencode($playerCode); ?>" class="play-btn">
                     <i class="fas fa-play"></i> JOUER AU KENO
                 </a>
             </div>
             
-            <div class="game-card" onclick="window.location.href='play.php?game=slots'">
+            <div class="game-card" onclick="window.location.href='play.php?game=slots&code=<?php echo urlencode($playerCode); ?>'">
                 <div class="game-icon slots-icon">
                     <i class="fas fa-sliders-h"></i>
                 </div>
                 <h3>SLOTS</h3>
                 <p>Machine à sous avec 5 rouleaux et 20 lignes de paiement. Tournez les rouleaux et gagnez le jackpot!</p>
-                <a href="play.php?game=slots" class="play-btn">
+                <a href="play.php?game=slots&code=<?php echo urlencode($playerCode); ?>" class="play-btn">
                     <i class="fas fa-play"></i> JOUER AUX SLOTS
                 </a>
             </div>

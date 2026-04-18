@@ -513,7 +513,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_code'])) {
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                <?php endif
+                <?php endif; ?>
                 </div>
             </div>
         </div>
